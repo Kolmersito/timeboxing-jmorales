@@ -1,34 +1,39 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { LoginPage } from './components/LoginPage'
+import { DashboardPage } from './components/DashboardPage'
+import { PlannerPage } from './components/PlannerPage'
+
+type ViewState = 'login' | 'dashboard' | 'planner';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentView, setCurrentView] = useState<ViewState>('login');
+  
+  // Nuevo estado para guardar el nombre del proyecto seleccionado
+  const [activeProject, setActiveProject] = useState<string>('');
+
+  // Esta función se ejecuta al hacer clic en una tarjeta o en el botón principal
+  const handleOpenPlanner = (projectName: string) => {
+    setActiveProject(projectName);
+    setCurrentView('planner');
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      {currentView === 'login' && (
+        <LoginPage onLogin={() => setCurrentView('dashboard')} />
+      )}
+      
+      {currentView === 'dashboard' && (
+        <DashboardPage onOpenPlanner={handleOpenPlanner} />
+      )}
+      
+      {currentView === 'planner' && (
+        <PlannerPage 
+          projectName={activeProject} 
+          onBack={() => setCurrentView('dashboard')} 
+        />
+      )}
+    </div>
   )
 }
 
